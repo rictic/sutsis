@@ -1,0 +1,14 @@
+application: sutyvlaste
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /lib
+  static_dir: lib
+- url: /data
+  static_dir: data
+- url: /
+  static_files: index.html
+  upload: index.html

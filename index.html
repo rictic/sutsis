@@ -1,0 +1,42 @@
+<html>
+<head>
+  <title>ze'i jbovlaste</title>
+</head>
+<body>
+  <input id="typehere"></input>
+
+  <div id='output'>
+
+  </div>
+
+  <script src='lib/jquery.js'></script>
+  <script>
+    var literals = {};
+    $.get("data/lojban-export.xml").then(function(doc) {
+      var dictionary = doc.childNodes[0];
+      var eToL = dictionary.childNodes[2];
+      var words = eToL.childNodes;
+      for (var i = 1; i < words.length; i++) {
+        var nlword = $(eToL.childNodes[i]);
+        if (!(nlword.attr('word') in literals)) {
+          literals[nlword.attr('word')] = [];
+        }
+        literals[nlword.attr('word')].push(nlword.attr('valsi'));
+      }
+    });
+
+    var typehere = $("#typehere");
+    var output = $("#output");
+    function search() {
+      var query = typehere.val();
+      var words = literals[query];
+      if (words) {
+        output.text(words.join(", "));
+      } else {
+        output.text("<none>");
+      }
+    }
+    typehere.keyup(search);
+  </script>
+</body>
+</html>
