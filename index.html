@@ -3,9 +3,59 @@
   <title>sutyvlaste: ze'i jbovlaste</title>
   <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
   <style type="text/css">
+    /* Sticky footer styles
+    -------------------------------------------------- */
+
+    html,
     body {
-      padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      height: 100%;
+      /* The html and body elements cannot have any padding or margin. */
     }
+
+    /* Wrapper for page content to push down footer */
+    #wrap {
+      min-height: 100%;
+      height: auto !important;
+      height: 100%;
+      /* Negative indent footer by it's height */
+      margin: 0 auto -60px;
+    }
+
+    /* Set the fixed height of the footer here */
+    #push,
+    #footer {
+      height: 60px;
+    }
+    #footer {
+      background-color: #f5f5f5;
+    }
+
+    /* Lastly, apply responsive CSS fixes as necessary */
+    @media (max-width: 767px) {
+      #footer {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+
+
+
+    /* Custom page CSS
+    -------------------------------------------------- */
+    /* Not required for template or sticky footer method. */
+
+    .container {
+      width: auto;
+      max-width: 680px;
+    }
+    .container .credit {
+      margin: 20px 0;
+    }
+
+
+
 
     h4 {
       display: inline;
@@ -22,7 +72,7 @@
     .term {
       margin: 30px;
     }
-    #typehere {
+    #search {
       display: none;
     }
     .rafsi {
@@ -32,33 +82,63 @@
       font-style: italic;
       margin-left: 15px;
     }
+    .right-header {
+      float: right;
+      margin-top: 14px;
+    }
+    #typehere {
+      height: 30px;
+      width: 206px;
+    }
   </style>
 </head>
 <body>
-  <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
+
+    <!-- Part 1: Wrap all page content here -->
+    <div id="wrap">
+
+      <!-- Begin page content -->
       <div class="container">
-        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="brand" href="#">sutyvlaste</a>
-      </div>
-    </div>
-  </div>
+        <div class="page-header">
+          <div class='right-header'>
+            <div id='loading'>
+              <img src="data/loading.gif">
+            </div>
+            <div id='search'>
 
-    <div class="container">
+              <div class="control-group">
+                <div class="controls">
+                  <div class="input-prepend">
+                    <span class="add-on"><i class="icon-search"></i></span>
+                    <input class="span2" id="typehere" type="text" autofocus>
+                  </div>
+                </div>
+              </div>
+<!--               <div class="controls">
+                <div class="input-prepend">
+                  <span class="add-on"><i class="icon-search"></i></span>
+                  <input id="typehere" autofocus></input>
+                </div>
+              </div> -->
+            </div>
+          </div>
 
-      <div id='main'>
-        <h1>Search:</h1>
-        <div id='loading'>
-          <img src="data/loading.gif">
+          <h1>sutyvlaste</h1>
+
         </div>
-        <input id="typehere" autofocus></input>
 
         <div id='output'></div>
+
       </div>
+
+      <div id="push"></div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">View source on github: <a href="http://github.com/rictic/sutyvlaste">rictic/sutyvlaste</a>.</p>
+      </div>
+    </div>
 
     </div> <!-- /container -->
 
@@ -268,7 +348,7 @@
     function engineReady(arg) {
       if (arg) {
         $("#loading").remove();
-        $("#typehere").show();
+        $("#search").show();
       }
     }
 
