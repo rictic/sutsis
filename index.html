@@ -16,13 +16,21 @@
       margin-left: 25px;
     }
     .definition {
-      margin-top: 15px;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
     .term {
       margin: 30px;
     }
     #typehere {
       display: none;
+    }
+    .rafsi {
+      font-size: 90%;
+    }
+    .rafsi span {
+      font-style: italic;
+      margin-left: 15px;
     }
   </style>
 </head>
@@ -74,20 +82,26 @@
   <script>
     var literals = {};
     var documentStore = {};
+
+    function addLiteral(english, lojban) {
+      if (!(english in literals)) {
+        literals[english] = [];
+      }
+      literals[english].push(lojban);
+    }
+
     $.ajax({url:"data/lojban-export.xml", dataType:'xml'}).then(function(doc) {
       if (doc == null) {return;}
       var dictionary = doc.childNodes[0];
       var eToL = dictionary.childNodes[2];
       var words = eToL.childNodes;
+
       for (var i = 1; i < words.length; i++) {
         var nlword = $(eToL.childNodes[i]);
         var terms = [nlword.attr('word')];
         while (terms.length > 0) {
           var term = terms.pop();
-          if (!(term in literals)) {
-            literals[term] = [];
-          }
-          literals[term].push(nlword.attr('valsi'));
+          addLiteral(term, nlword.attr('valsi'))
         }
       }
       var lToE = dictionary.childNodes[1];
@@ -100,10 +114,18 @@
         }
         var type = valsi.attr("type")
         var definition = valsi.find('definition').text();
+        var rafsi = [].slice.call(
+          valsi.find('rafsi').map(function(_, r){
+            addLiteral($(r).text(), term);
+            return $(r).text();
+          })
+        );
+
         documentStore[term] = {
             word: term,
             type: type,
-            definition: definition
+            definition: definition,
+            rafsi: rafsi
         };
       }
       setupSearchEngine();
@@ -203,6 +225,15 @@
         defElem.append($("<i>").html(latec));
       }
       defElem.appendTo(out);
+
+      if (def.rafsi && def.rafsi.length > 0) {
+        var rafsi = $("<div>").addClass('rafsi');
+        rafsi.append("rafsi: ");
+        for (var i = 0; i < def.rafsi.length; i++) {
+          rafsi.append($("<span>").text(def.rafsi[i] + ' '));
+        }
+        rafsi.appendTo(out);
+      }
       out.appendTo(output);
     }
 
