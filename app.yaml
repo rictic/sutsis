@@ -9,7 +9,7 @@ handlers:
   static_dir: lib
 - url: /data
   static_dir: data
-  expiration: "5d"
+  expiration: "90d"
 - url: /
   static_files: index.html
   upload: index.html
