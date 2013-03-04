@@ -12,31 +12,64 @@
   <script src='lib/jquery.js'></script>
   <script>
     var literals = {};
-    $.get("data/lojban-export.xml").then(function(doc) {
+    var documentStore = {};
+    $.ajax({url:"data/lojban-export.xml", dataType:'xml'}).then(function(doc) {
+      if (doc == null) {return;}
       var dictionary = doc.childNodes[0];
       var eToL = dictionary.childNodes[2];
       var words = eToL.childNodes;
       for (var i = 1; i < words.length; i++) {
         var nlword = $(eToL.childNodes[i]);
-        if (!(nlword.attr('word') in literals)) {
-          literals[nlword.attr('word')] = [];
+        var terms = [nlword.attr('word'), nlword.attr('valsi')];
+        while (terms.length > 0) {
+          var term = terms.pop();
+          if (!(term in literals)) {
+            literals[term] = [];
+          }
+          literals[term].push(nlword.attr('valsi'));
         }
-        literals[nlword.attr('word')].push(nlword.attr('valsi'));
       }
+      var lToE = dictionary.childNodes[1];
+      var words = lToE.childNodes;
+      for (var i = 1; i < words.length; i++) {
+        var valsi = $(words[i]);
+        var term = valsi.attr("word")
+        var type = valsi.attr("type")
+        var definition = valsi.find('definition').text();
+        if (!(term in documentStore)) {
+          documentStore[term] = [];
+        }
+        documentStore[term].push({
+          word: term,
+          type: type,
+          definition: definition
+        });
+      }
+
+      // debugger
     });
 
     var typehere = $("#typehere");
     var output = $("#output");
     function search() {
       var query = typehere.val();
-      var words = literals[query];
-      if (words) {
-        output.text(words.join(", "));
-      } else {
-        output.text("<none>");
+      var words = literals[query] || [];
+      output.empty();
+      for (var i = 0; i < words.length; i++) {
+        var documents = documentStore[words[i]];
+        for (var j = 0; j < documents.length; j++) {
+          displayDocument(documents[j]);
+        }
       }
     }
+
+    function displayDocument(def) {
+      $("<div>").append(def.word + ": " + def.definition).appendTo(output);
+    }
+
     typehere.keyup(search);
+
+
   </script>
 </body>
 </html>
