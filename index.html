@@ -56,6 +56,21 @@
 
 
   <script src='lib/jquery.js'></script>
+
+  <script type="text/javascript" src="lib/fullproof/unicode/categ_letters_numbers.js"></script>
+  <script type="text/javascript" src="lib/fullproof/unicode/normalizer_lowercase_nomark.js"></script>
+  <script type="text/javascript" src="lib/fullproof/unicode/unicode.js"></script>
+  <script type="text/javascript" src="lib/fullproof/analyzers.js"></script>
+  <script type="text/javascript" src="lib/fullproof/normalizers.js"></script>
+  <script type="text/javascript" src="lib/fullproof/misc/dataloader.js"></script>
+  <script type="text/javascript" src="lib/fullproof/capabilities.js"></script>
+  <script type="text/javascript" src="lib/fullproof/utils.js"></script>
+  <script type="text/javascript" src="lib/fullproof/common-engine.js"></script>
+  <script type="text/javascript" src="lib/fullproof/boolean-engine.js"></script>
+  <script type="text/javascript" src="lib/fullproof/resultsets.js"></script>
+  <script type="text/javascript" src="lib/fullproof/storemanager.js"></script>
+  <script type="text/javascript" src="lib/fullproof/stores/memory_store.js"></script>
+
   <script>
     var literals = {};
     var documentStore = {};
@@ -72,9 +87,6 @@
           if (!(term in literals)) {
             literals[term] = [];
           }
-          if (term == 'ba') {
-            debugger
-          }
           literals[term].push(nlword.attr('valsi'));
         }
       }
@@ -88,38 +100,49 @@
         }
         var type = valsi.attr("type")
         var definition = valsi.find('definition').text();
-        if (!(term in documentStore)) {
-          documentStore[term] = [];
-        } else {
-          debugger;
-        }
-        documentStore[term].push({
-          word: term,
-          type: type,
-          definition: definition
-        });
+        documentStore[term] = {
+            word: term,
+            type: type,
+            definition: definition
+        };
       }
-      $("#loading").remove();
-      $("#typehere").show();
-      search();
+      setupSearchEngine();
     });
 
     var typehere = $("#typehere");
     var output = $("#output");
+    var searchIdCounter = 0;
     function search() {
+      var searchId = ++searchIdCounter;
       var query = typehere.val();
       var words = literals[query] || [];
       words.push(query);
       output.empty();
+      if (query.length == 0) {
+        return;
+      }
+      var set = {};
       for (var i = 0; i < words.length; i++) {
-        var documents = documentStore[words[i]];
-        if (!documents) {
+        set[words[i]] = true;
+        var doc = documentStore[words[i]];
+        if (!doc) {
           continue;
         }
-        for (var j = 0; j < documents.length; j++) {
-          displayDocument(documents[j]);
-        }
+        displayDocument(doc);
       }
+      searchEngine.lookup(query, function(results) {
+        if (searchId !== searchIdCounter) {
+          return;
+        }
+        if (results) {
+          results.forEach(function(key) {
+            if (key in set) {
+              return;
+            }
+            displayDocument(documentStore[key]);
+          });
+        }
+      });
     }
 
     function displayDocument(def) {
@@ -147,6 +170,45 @@
     }
 
     typehere.keyup(search);
+
+    var searchEngine;
+    function setupSearchEngine() {
+      var dbName = "sutyvlaste";
+      searchEngine = new fullproof.BooleanEngine();
+      var indexes = [{
+          name: "normalindex",
+          analyzer: new fullproof.StandardAnalyzer(
+              fullproof.normalizer.to_lowercase_nomark),
+          capabilities: new fullproof.Capabilities().setUseScores(
+              false).setDbName(dbName),
+          initializer: initializer
+      }];
+      searchEngine.open(indexes, fullproof.make_callback(engineReady, true), fullproof.make_callback(engineReady, false));
+    }
+
+    function initializer(injector, callback) {
+      var numTerms = objectSize(documentStore);
+      var synchro = fullproof.make_synchro_point(callback, numTerms);
+
+      for (var key in documentStore) {
+        var doc = documentStore[key];
+        var text = doc.type + ' ' + doc.definition;
+        injector.inject(text, key, synchro);
+      }
+    }
+
+    function engineReady(arg) {
+      if (arg) {
+        $("#loading").remove();
+        $("#typehere").show();
+      }
+    }
+
+    function objectSize(obj) {
+      var i = 0;
+      for (var key in obj) i++;
+      return i;
+    }
   </script>
 </body>
 </html>
