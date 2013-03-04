@@ -340,7 +340,7 @@
 
       for (var key in documentStore) {
         var doc = documentStore[key];
-        var text = doc.type + ' ' + doc.definition;
+        var text = doc.word + ' ' + doc.type + ' ' + doc.definition;
         injector.inject(text, key, synchro);
       }
     }
