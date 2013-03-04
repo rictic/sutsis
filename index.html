@@ -1,13 +1,55 @@
 <html>
 <head>
-  <title>ze'i jbovlaste</title>
+  <title>sutyvlaste: ze'i jbovlaste</title>
+  <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
+  <style type="text/css">
+    body {
+      padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    }
+
+    h4 {
+      display: inline;
+    }
+    .type {
+      display: inline;
+      font-style: italic;
+      margin-left: 25px;
+    }
+    .definition {
+      margin-top: 15px;
+    }
+    .term {
+      margin: 30px;
+    }
+
+  </style>
 </head>
 <body>
-  <input id="typehere" autofocus></input>
-
-  <div id='output'>
-
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="#">sutyvlaste</a>
+      </div>
+    </div>
   </div>
+
+    <div class="container">
+
+      <h1>Search:</h1>
+        <input id="typehere" autofocus></input>
+
+        <div id='output'>
+
+        </div>
+
+
+    </div> <!-- /container -->
+
 
   <script src='lib/jquery.js'></script>
   <script>
@@ -20,11 +62,14 @@
       var words = eToL.childNodes;
       for (var i = 1; i < words.length; i++) {
         var nlword = $(eToL.childNodes[i]);
-        var terms = [nlword.attr('word'), nlword.attr('valsi')];
+        var terms = [nlword.attr('word')];
         while (terms.length > 0) {
           var term = terms.pop();
           if (!(term in literals)) {
             literals[term] = [];
+          }
+          if (term == 'ba') {
+            debugger
           }
           literals[term].push(nlword.attr('valsi'));
         }
@@ -34,10 +79,15 @@
       for (var i = 1; i < words.length; i++) {
         var valsi = $(words[i]);
         var term = valsi.attr("word")
+        if (!term) {
+          continue;
+        }
         var type = valsi.attr("type")
         var definition = valsi.find('definition').text();
         if (!(term in documentStore)) {
           documentStore[term] = [];
+        } else {
+          debugger;
         }
         documentStore[term].push({
           word: term,
@@ -54,9 +104,13 @@
     function search() {
       var query = typehere.val();
       var words = literals[query] || [];
+      words.push(query);
       output.empty();
       for (var i = 0; i < words.length; i++) {
         var documents = documentStore[words[i]];
+        if (!documents) {
+          continue;
+        }
         for (var j = 0; j < documents.length; j++) {
           displayDocument(documents[j]);
         }
@@ -64,7 +118,14 @@
     }
 
     function displayDocument(def) {
-      $("<div>").append(def.word + ": " + def.definition).appendTo(output);
+      var out = $("<div>").addClass('term');
+      out.append($("<heading>")
+          .append($("<h4>").text(def.word))
+          .append($("<div>").addClass('type').text(def.type))
+      );
+      out.append($("<div>").addClass('definition').text(def.definition));
+
+      out.appendTo(output);
     }
 
     typehere.keyup(search);
