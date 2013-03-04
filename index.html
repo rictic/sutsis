@@ -112,17 +112,23 @@
     var typehere = $("#typehere");
     var output = $("#output");
     var searchIdCounter = 0;
+    var limit;
     function search() {
       var searchId = ++searchIdCounter;
       var query = typehere.val();
-      var words = literals[query] || [];
+      var words = (literals[query] || []).slice();
+      limit = 10;
       words.push(query);
+
       output.empty();
       if (query.length == 0) {
         return;
       }
       var set = {};
+      var resultCount = 0;
+
       for (var i = 0; i < words.length; i++) {
+        resultCount++;
         set[words[i]] = true;
         var doc = documentStore[words[i]];
         if (!doc) {
@@ -131,19 +137,50 @@
         displayDocument(doc);
       }
       searchEngine.lookup(query, function(results) {
+        if (!results) {
+          return;
+        }
         if (searchId !== searchIdCounter) {
           return;
         }
-        if (results) {
-          results.forEach(function(key) {
+        var index = 0;
+
+        displayResultsUpToLimit = function() {
+          if (searchId !== searchIdCounter) {
+            return;
+          }
+          while (resultCount < limit) {
+            var key = results.getItem(index);
+            index++;
             if (key in set) {
-              return;
+              continue;
             }
-            displayDocument(documentStore[key]);
-          });
+            var doc = documentStore[key];
+            if (!doc) {
+              break;
+            }
+            resultCount++;
+            displayDocument(doc);
+          }
         }
+        checkScrolledNearBottom();
       });
     }
+
+    function displayResultsUpToLimit() {
+
+    }
+
+    function checkScrolledNearBottom() {
+      var windowBottom = ($(window).scrollTop() + window.innerHeight);
+      var bottom = $(document).height() - 700;
+      var isClose = windowBottom >= bottom;
+      if(isClose) {
+        limit += 10;
+        displayResultsUpToLimit();
+      }
+    }
+    $(window).scroll(checkScrolledNearBottom);
 
     function displayDocument(def) {
       var out = $("<div>").addClass('term');
