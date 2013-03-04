@@ -95,8 +95,7 @@
           definition: definition
         });
       }
-
-      // debugger
+      search();
     });
 
     var typehere = $("#typehere");
@@ -123,14 +122,26 @@
           .append($("<h4>").text(def.word))
           .append($("<div>").addClass('type').text(def.type))
       );
-      out.append($("<div>").addClass('definition').text(def.definition));
+      var defElem = $("<div>").addClass('definition');
 
+      var definition = def.definition;
+      var vals = definition.split("$");
+      // debugger
+      for (var i = 0; i < vals.length; i++) {
+        if (i % 2 === 0) {
+          defElem.append($("<span>").text(vals[i]));
+          continue;
+        }
+        var latec = vals[i];
+
+        latec = latec.replace(/(.)_\{?(\d+)\}?/g, "$1<sub>$2</sub>");
+        defElem.append($("<i>").html(latec));
+      }
+      defElem.appendTo(out);
       out.appendTo(output);
     }
 
     typehere.keyup(search);
-
-
   </script>
 </body>
 </html>
