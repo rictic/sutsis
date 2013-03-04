@@ -7,9 +7,12 @@ threadsafe: yes
 handlers:
 - url: /lib
   static_dir: lib
+  secure: always
 - url: /data
   static_dir: data
   expiration: "90d"
+  secure: always
 - url: /
   static_files: index.html
   upload: index.html
+  secure: always
