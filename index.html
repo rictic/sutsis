@@ -21,7 +21,9 @@
     .term {
       margin: 30px;
     }
-
+    #typehere {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -40,13 +42,15 @@
 
     <div class="container">
 
-      <h1>Search:</h1>
+      <div id='main'>
+        <h1>Search:</h1>
+        <div id='loading'>
+          <img src="data/loading.gif">
+        </div>
         <input id="typehere" autofocus></input>
 
-        <div id='output'>
-
-        </div>
-
+        <div id='output'></div>
+      </div>
 
     </div> <!-- /container -->
 
@@ -95,6 +99,8 @@
           definition: definition
         });
       }
+      $("#loading").remove();
+      $("#typehere").show();
       search();
     });
 
