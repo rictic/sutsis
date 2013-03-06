@@ -1,0 +1,79 @@
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+
+  <script src='/lib/jquery.js'></script>
+  <script>
+    literals = {};
+    documentStore = {};
+    function getDictionaryXML(callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/data/lojban-export.xml');
+      // xhr.overrideMimeType('application/xml');
+      xhr.onloadend = function() {
+        callback(xhr.responseXML);
+      }
+      // xhr.onreadystatechange = function() {
+      //   debugger;
+      // }
+      xhr.send();
+    }
+
+    function addLiteral(english, lojban) {
+      if (!(english in literals)) {
+        literals[english] = [];
+      }
+      literals[english].push(lojban);
+    }
+
+    getDictionaryXML(function(doc) {
+      if (doc == null) {return;}
+
+      var dictionary = doc.childNodes[0];
+      var eToL = dictionary.childNodes[2];
+      var words = eToL.childNodes;
+
+      for (var i = 1; i < words.length; i++) {
+        var nlword = $(eToL.childNodes[i]);
+        var terms = [nlword.attr('word')];
+        while (terms.length > 0) {
+          var term = terms.pop();
+          if (term == null) {
+            continue;
+          }
+          addLiteral(term, nlword.attr('valsi'))
+        }
+      }
+      var lToE = dictionary.childNodes[1];
+      var words = lToE.childNodes;
+      for (var i = 1; i < words.length; i++) {
+        var valsi = $(words[i]);
+        var term = valsi.attr("word")
+        if (!term) {
+          continue;
+        }
+        var type = valsi.attr("type")
+        var definition = valsi.find('definition').text();
+        var rafsi = [].slice.call(
+          valsi.find('rafsi').map(function(_, r){
+            addLiteral($(r).text(), term);
+            return $(r).text();
+          })
+        );
+
+        // todo: notes
+        documentStore[term] = {
+            word: term,
+            type: type,
+            definition: definition,
+            rafsi: rafsi
+        };
+      }
+      document.write(('var documentStore = ' + JSON.stringify(documentStore)) + ';');
+      document.write(('var literals = ' + JSON.stringify(literals)) + ';');
+    });
+  </script>
+</body>
+</html>

@@ -16,3 +16,15 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
+- url: /search.js
+  static_files: search.js
+  upload: search.js
+  secure: always
+- url: /worker.js
+  static_files: worker.js
+  upload: worker.js
+  secure: always
+- url: /parseXML.html
+  static_files: parseXML.html
+  upload: parseXML.html
+  secure: always

@@ -143,134 +143,31 @@
     </div> <!-- /container -->
 
 
-  <script src='lib/jquery.js'></script>
-
-  <script type="text/javascript" src="lib/fullproof/unicode/categ_letters_numbers.js"></script>
-  <script type="text/javascript" src="lib/fullproof/unicode/normalizer_lowercase_nomark.js"></script>
-  <script type="text/javascript" src="lib/fullproof/unicode/unicode.js"></script>
-  <script type="text/javascript" src="lib/fullproof/analyzers.js"></script>
-  <script type="text/javascript" src="lib/fullproof/normalizers.js"></script>
-  <script type="text/javascript" src="lib/fullproof/misc/dataloader.js"></script>
-  <script type="text/javascript" src="lib/fullproof/capabilities.js"></script>
-  <script type="text/javascript" src="lib/fullproof/utils.js"></script>
-  <script type="text/javascript" src="lib/fullproof/common-engine.js"></script>
-  <script type="text/javascript" src="lib/fullproof/boolean-engine.js"></script>
-  <script type="text/javascript" src="lib/fullproof/resultsets.js"></script>
-  <script type="text/javascript" src="lib/fullproof/storemanager.js"></script>
-  <script type="text/javascript" src="lib/fullproof/stores/memory_store.js"></script>
-
+  <script src='/lib/jquery.js'></script>
+  <script src='/search.js'></script>
   <script>
-    var literals = {};
-    var documentStore = {};
-
-    function addLiteral(english, lojban) {
-      if (!(english in literals)) {
-        literals[english] = [];
-      }
-      literals[english].push(lojban);
-    }
-
-    $.ajax({url:"data/lojban-export.xml", dataType:'xml'}).then(function(doc) {
-      if (doc == null) {return;}
-      var dictionary = doc.childNodes[0];
-      var eToL = dictionary.childNodes[2];
-      var words = eToL.childNodes;
-
-      for (var i = 1; i < words.length; i++) {
-        var nlword = $(eToL.childNodes[i]);
-        var terms = [nlword.attr('word')];
-        while (terms.length > 0) {
-          var term = terms.pop();
-          addLiteral(term, nlword.attr('valsi'))
-        }
-      }
-      var lToE = dictionary.childNodes[1];
-      var words = lToE.childNodes;
-      for (var i = 1; i < words.length; i++) {
-        var valsi = $(words[i]);
-        var term = valsi.attr("word")
-        if (!term) {
-          continue;
-        }
-        var type = valsi.attr("type")
-        var definition = valsi.find('definition').text();
-        var rafsi = [].slice.call(
-          valsi.find('rafsi').map(function(_, r){
-            addLiteral($(r).text(), term);
-            return $(r).text();
-          })
-        );
-
-        documentStore[term] = {
-            word: term,
-            type: type,
-            definition: definition,
-            rafsi: rafsi
-        };
-      }
-      setupSearchEngine();
-    });
-
+    var limit;
     var typehere = $("#typehere");
     var output = $("#output");
-    var searchIdCounter = 0;
-    var limit;
-    function search() {
-      var searchId = ++searchIdCounter;
-      var query = typehere.val();
-      var words = (literals[query] || []).slice();
-      limit = 10;
-      words.push(query);
-
-      output.empty();
-      if (query.length == 0) {
-        return;
+    var worker = new Worker('/worker.js');
+    var resultCount;
+    var results = [];
+    worker.onmessage = function(ev) {
+      if (!ev.data) {
+        console.error(ev);
+        throw new Error("got bad data from worker: " + JSON.stringify(ev.data))
       }
-      var set = {};
-      var resultCount = 0;
-
-      for (var i = 0; i < words.length; i++) {
-        resultCount++;
-        set[words[i]] = true;
-        var doc = documentStore[words[i]];
-        if (!doc) {
-          continue;
-        }
-        displayDocument(doc);
+      if (ev.data.kind == 'ready') {
+        engineReady();
+      } else if (ev.data.kind == 'searchResults') {
+        results = ev.data.results;
+        displayResults();
       }
-      searchEngine.lookup(query, function(results) {
-        if (!results) {
-          return;
-        }
-        if (searchId !== searchIdCounter) {
-          return;
-        }
-        var index = 0;
+    };
 
-        displayResultsUpToLimit = function() {
-          if (searchId !== searchIdCounter) {
-            return;
-          }
-          while (resultCount < limit) {
-            var key = results.getItem(index);
-            index++;
-            if (key in set) {
-              continue;
-            }
-            var doc = documentStore[key];
-            if (!doc) {
-              break;
-            }
-            resultCount++;
-            displayDocument(doc);
-          }
-        }
-        checkScrolledNearBottom();
-      });
-    }
-
-    function displayResultsUpToLimit() {
-
+    function engineReady(arg) {
+      $("#loading").remove();
+      $("#search").show();
     }
 
     function checkScrolledNearBottom() {
@@ -279,7 +176,7 @@
       var isClose = windowBottom >= bottom;
       if(isClose) {
         limit += 10;
-        displayResultsUpToLimit();
+        displayResults();
       }
     }
     $(window).scroll(checkScrolledNearBottom);
@@ -317,46 +214,48 @@
       out.appendTo(output);
     }
 
-    typehere.keyup(search);
-
-    var searchEngine;
-    function setupSearchEngine() {
-      var dbName = "sutyvlaste";
-      searchEngine = new fullproof.BooleanEngine();
-      var indexes = [{
-          name: "normalindex",
-          analyzer: new fullproof.StandardAnalyzer(
-              fullproof.normalizer.to_lowercase_nomark),
-          capabilities: new fullproof.Capabilities().setUseScores(
-              false).setDbName(dbName),
-          initializer: initializer
-      }];
-      searchEngine.open(indexes, fullproof.make_callback(engineReady, true), fullproof.make_callback(engineReady, false));
+    var searchIdCounter = 0;
+    var prevQuery;
+    function doSearch() {
+      var query = typehere.val();
+      if (query === prevQuery) {
+        return;
+      }
+      prevQuery = query;
+      var searchId = ++searchIdCounter;
+      output.empty();
+      limit = 10;
+      resultCount = 0;
+      worker.postMessage({kind: 'newSearch', 'query': query, 'searchId': searchId});
     }
+    typehere.keyup(doSearch);
 
-    function initializer(injector, callback) {
-      var numTerms = objectSize(documentStore);
-      var synchro = fullproof.make_synchro_point(callback, numTerms);
-
-      for (var key in documentStore) {
-        var doc = documentStore[key];
-        var text = doc.word + ' ' + doc.type + ' ' + doc.definition;
-        injector.inject(text, key, synchro);
+    function displayResults() {
+      var displayUpTo = Math.min(limit, results.length);
+      for (; resultCount < displayUpTo; resultCount++) {
+        displayDocument(results[resultCount]);
       }
     }
 
-    function engineReady(arg) {
-      if (arg) {
-        $("#loading").remove();
-        $("#search").show();
-      }
-    }
-
-    function objectSize(obj) {
-      var i = 0;
-      for (var key in obj) i++;
-      return i;
-    }
+    //     displayResultsUpToLimit = function() {
+    //   if (searchId !== searchIdCounter) {
+    //     return;
+    //   }
+    //   while (resultCount < limit) {
+    //     var key = results.getItem(index);
+    //     index++;
+    //     if (key in set) {
+    //       continue;
+    //     }
+    //     var doc = documentStore[key];
+    //     if (!doc) {
+    //       break;
+    //     }
+    //     resultCount++;
+    //     displayDocument(doc);
+    //   }
+    // }
+    // checkScrolledNearBottom();
   </script>
 </body>
 </html>
