@@ -1,7 +1,7 @@
 <html>
 <head>
   <title>sutyvlaste: ze'i jbovlaste</title>
-  <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.min.css">
   <style type="text/css">
     /* Sticky footer styles
     -------------------------------------------------- */
@@ -102,7 +102,7 @@
         <div class="page-header">
           <div class='right-header'>
             <div id='loading'>
-              <img src="data/loading.gif">
+              <img src="/data/loading.gif">
             </div>
             <div id='search'>
 
@@ -152,6 +152,7 @@
     var worker = new Worker('/worker.js');
     var resultCount;
     var results = [];
+    var ready = false;
     worker.onmessage = function(ev) {
       if (!ev.data) {
         console.error(ev);
@@ -166,8 +167,10 @@
     };
 
     function engineReady(arg) {
+      ready = true;
       $("#loading").remove();
       $("#search").show();
+      doSearch();
     }
 
     function checkScrolledNearBottom() {
@@ -221,12 +224,15 @@
 
     var searchIdCounter = 0;
     var prevQuery;
+    var lastQueried = now();
     function doSearch() {
       var query = typehere.val();
       if (query === prevQuery) {
         return;
       }
       prevQuery = query;
+      updateUrl(query);
+
       var searchId = ++searchIdCounter;
       output.empty();
       limit = 10;
@@ -235,6 +241,40 @@
     }
     typehere.keyup(doSearch);
 
+    function updateUrl(query) {
+      var url = '/';
+      if (query.length > 0) {
+        url = '/search/' + query
+      }
+      if (url == window.location.pathname) {
+        console.log('skipping');
+        return;
+      }
+      var difference = now() - lastQueried;
+      console.log(difference > 2000, difference);
+      if (difference > 2000) {
+        window.history.pushState({}, null, url);
+        console.log('push');
+      } else {
+        window.history.replaceState({}, null, url);
+        console.log('replace');
+      }
+      lastQueried = now();
+    }
+    function handleUrl() {
+      var searchMatch = window.location.pathname.match(/\/search\/(.*)/);
+      query = '';
+      if (searchMatch) {
+        var query = decodeURIComponent(searchMatch[1]);
+      }
+      typehere.val(query);
+      if (ready) {
+        doSearch();
+      }
+    }
+    handleUrl();
+    window.addEventListener('popstate', handleUrl);
+
     function displayResults() {
       var displayUpTo = Math.min(limit, results.length);
       for (; resultCount < displayUpTo; resultCount++) {
@@ -242,6 +282,14 @@
       }
     }
 
+    function now() {
+      if (performance) {
+        if (performance.now) {
+          return performance.now();
+        }
+      }
+      return +new Date();
+    }
   </script>
 </body>
 </html>

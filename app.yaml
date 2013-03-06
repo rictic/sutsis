@@ -16,6 +16,10 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
+- url: /search/.*
+  static_files: index.html
+  upload: index.html
+  secure: always
 - url: /search.js
   static_files: search.js
   upload: search.js
