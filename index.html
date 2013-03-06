@@ -203,6 +203,10 @@
       }
       defElem.appendTo(out);
 
+      if (def.notes) {
+        out.append($('<div>').addClass('notes').text(def.notes));
+      }
+
       if (def.rafsi && def.rafsi.length > 0) {
         var rafsi = $("<div>").addClass('rafsi');
         rafsi.append("rafsi: ");
@@ -211,6 +215,7 @@
         }
         rafsi.appendTo(out);
       }
+
       out.appendTo(output);
     }
 
@@ -237,25 +242,6 @@
       }
     }
 
-    //     displayResultsUpToLimit = function() {
-    //   if (searchId !== searchIdCounter) {
-    //     return;
-    //   }
-    //   while (resultCount < limit) {
-    //     var key = results.getItem(index);
-    //     index++;
-    //     if (key in set) {
-    //       continue;
-    //     }
-    //     var doc = documentStore[key];
-    //     if (!doc) {
-    //       break;
-    //     }
-    //     resultCount++;
-    //     displayDocument(doc);
-    //   }
-    // }
-    // checkScrolledNearBottom();
   </script>
 </body>
 </html>

@@ -56,6 +56,7 @@
         }
         var type = valsi.attr("type")
         var definition = valsi.find('definition').text();
+        var notes = valsi.find('notes').text();
         var rafsi = [].slice.call(
           valsi.find('rafsi').map(function(_, r){
             addLiteral($(r).text(), term);
@@ -68,7 +69,8 @@
             word: term,
             type: type,
             definition: definition,
-            rafsi: rafsi
+            rafsi: rafsi,
+            notes: notes
         };
       }
       document.write(('var documentStore = ' + JSON.stringify(documentStore)) + ';');
