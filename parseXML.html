@@ -11,13 +11,9 @@
     function getDictionaryXML(callback) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', '/data/lojban-export.xml');
-      // xhr.overrideMimeType('application/xml');
       xhr.onloadend = function() {
         callback(xhr.responseXML);
       }
-      // xhr.onreadystatechange = function() {
-      //   debugger;
-      // }
       xhr.send();
     }
 
