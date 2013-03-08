@@ -185,30 +185,25 @@
     }
     $(window).scroll(checkScrolledNearBottom);
 
+    function lojTemplate(s) {
+      s = s.replace(/\$.*?\$/g, function(c) {
+        c = c.substring(1, c.length-1);
+        return c.replace(/(\w)_\{?(\d+)\}?/g, "$1<sub>$2</sub>")
+      });
+      s = s.replace(/\{(.*?)\}/g, "<a href='/search/$1'>$1</a>");
+      return s;
+    }
+
     function displayDocument(def) {
       var out = $("<div>").addClass('term');
       out.append($("<heading>")
           .append($("<h4>").text(def.word))
           .append($("<div>").addClass('type').text(def.type))
       );
-      var defElem = $("<div>").addClass('definition');
-
-      var definition = def.definition;
-      var vals = definition.split("$");
-      for (var i = 0; i < vals.length; i++) {
-        if (i % 2 === 0) {
-          defElem.append($("<span>").text(vals[i]));
-          continue;
-        }
-        var latec = vals[i];
-
-        latec = latec.replace(/(.)_\{?(\d+)\}?/g, "$1<sub>$2</sub>");
-        defElem.append($("<i>").html(latec));
-      }
-      defElem.appendTo(out);
+      $("<div>").addClass('definition').html(lojTemplate(def.definition)).appendTo(out);
 
       if (def.notes) {
-        out.append($('<div>').addClass('notes').text(def.notes));
+        out.append($('<div>').addClass('notes').html(lojTemplate(def.notes)));
       }
 
       if (def.rafsi && def.rafsi.length > 0) {
