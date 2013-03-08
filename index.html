@@ -1,4 +1,4 @@
-<html>
+<html manifest='/webapp.manifest'>
 <head>
   <title>sutyvlaste: ze'i jbovlaste</title>
   <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.min.css">
@@ -190,7 +190,10 @@
         c = c.substring(1, c.length-1);
         return c.replace(/(\w)_\{?(\d+)\}?/g, "$1<sub>$2</sub>")
       });
-      s = s.replace(/\{(.*?)\}/g, "<a href='/search/$1'>$1</a>");
+      s = s.replace(/\{(.*?)\}/g, function(c) {
+        var c = c.substring(1, c.length-1);
+        return '<a href="/search/' + encodeURIComponent(c) + '">' + c + "</a>"
+      });
       return s;
     }
 
@@ -247,17 +250,13 @@
         url = '/search/' + query
       }
       if (url == window.location.pathname) {
-        console.log('skipping');
         return;
       }
       var difference = now() - lastQueried;
-      console.log(difference > 2000, difference);
       if (difference > 2000) {
         window.history.pushState({}, null, url);
-        console.log('push');
       } else {
         window.history.replaceState({}, null, url);
-        console.log('replace');
       }
       lastQueried = now();
     }

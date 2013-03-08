@@ -1,5 +1,7 @@
 CACHE MANIFEST
 
+# Version 1.04
+
 CACHE:
 /
 /search.js
@@ -23,3 +25,6 @@ CACHE:
 /lib/bootstrap/css/bootstrap.min.css
 /lib/bootstrap/img/glyphicons-halflings-white.png
 /lib/bootstrap/img/glyphicons-halflings.png
+
+FALLBACK:
+/search/* /
