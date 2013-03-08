@@ -214,7 +214,11 @@
         }
         rafsi.appendTo(out);
       }
-
+      out.find('a').click(function(el) {
+        window.history.pushState({}, null, $(el.target).attr('href'));
+        handleUrl();
+        return false;
+      });
       out.appendTo(output);
     }
 
