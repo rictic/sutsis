@@ -55,7 +55,6 @@
         var notes = valsi.find('notes').text();
         var rafsi = [].slice.call(
           valsi.find('rafsi').map(function(_, r){
-            addLiteral($(r).text(), term);
             return $(r).text();
           })
         );
