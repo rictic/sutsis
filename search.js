@@ -64,7 +64,7 @@ function initializer(injector, callback) {
 
   for (var key in documentStore) {
     var doc = documentStore[key];
-    var text = doc.word + ' ' + doc.type + ' ' + doc.definition + ' ' + doc.notes;
+    var text = [doc.word, doc.type, doc.definition, doc.notes, doc.rafsi.join(' ')].join(' ');
     injector.inject(text, key, synchro);
   }
 }
