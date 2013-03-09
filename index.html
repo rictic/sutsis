@@ -273,6 +273,11 @@
     }
     handleUrl();
     window.addEventListener('popstate', handleUrl);
+    $(document.body).keyup(function(ev) {
+      if (ev.keyCode === 191) {  // The '/' character
+        typehere.focus();
+      }
+    })
 
     function displayResults() {
       var displayUpTo = Math.min(limit, results.length);
