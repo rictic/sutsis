@@ -32,7 +32,7 @@ handlers:
   static_files: parseXML.html
   upload: parseXML.html
   secure: always
-- url: /webapp.manifest
-  static_files: webapp.manifest
-  upload: webapp.manifest
+- url: /webapp.appcache
+  static_files: webapp.appcache
+  upload: webapp.appcache
   secure: always
