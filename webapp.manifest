@@ -27,4 +27,4 @@ CACHE:
 /lib/bootstrap/img/glyphicons-halflings.png
 
 FALLBACK:
-/search/* /
+/search/ /
