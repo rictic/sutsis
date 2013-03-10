@@ -28,7 +28,7 @@ function search(query, callback) {
       results.push({
         type: 'unknown lujvo',
         word: query,
-        rafsi: decomposition,
+        rafsi: [],
         rafsiDocuments: decomposition.map(function(r){return rafsi[r]})
       })
     }

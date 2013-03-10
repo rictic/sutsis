@@ -202,11 +202,11 @@
     function displayDocument(def) {
       var out = $("<div>").addClass('term');
       out.append($("<heading>")
-          .append($("<h4>").text(def.word))
-          .append($("<div>").addClass('type').text(def.type))
+          .append($("<h4>").text(def.word + ' '))
+          .append($("<div>").addClass('type').text(def.type + ' '))
       );
       if (def.definition) {
-        $("<div>").addClass('definition').html(lojTemplate(def.definition)).appendTo(out);
+        $("<div>").addClass('definition').html(lojTemplate(def.definition) + ' ').appendTo(out);
       } else {
         var subDefs = $("<div>").addClass('definition').addClass('subdefinitions');
         for (var i = 0; i < def.rafsiDocuments.length; i++) {
@@ -217,7 +217,7 @@
 
 
       if (def.notes) {
-        out.append($('<div>').addClass('notes').html(lojTemplate(def.notes)));
+        out.append($('<div>').addClass('notes').html(lojTemplate(def.notes) + ' '));
       }
 
       if (def.rafsi && def.rafsi.length > 0) {
