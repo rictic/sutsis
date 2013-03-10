@@ -145,7 +145,6 @@
 
 
   <script src='/lib/jquery.js'></script>
-  <script src='/search.js'></script>
   <script>
     var limit;
     var typehere = $("#typehere");
@@ -162,6 +161,9 @@
       if (ev.data.kind == 'ready') {
         engineReady();
       } else if (ev.data.kind == 'searchResults') {
+        if (ev.data.query !== typehere.val()) {
+          return;
+        }
         results = ev.data.results;
         displayResults();
       }
@@ -203,7 +205,16 @@
           .append($("<h4>").text(def.word))
           .append($("<div>").addClass('type').text(def.type))
       );
-      $("<div>").addClass('definition').html(lojTemplate(def.definition)).appendTo(out);
+      if (def.definition) {
+        $("<div>").addClass('definition').html(lojTemplate(def.definition)).appendTo(out);
+      } else {
+        var subDefs = $("<div>").addClass('definition').addClass('subdefinitions');
+        for (var i = 0; i < def.rafsiDocuments.length; i++) {
+          displayDocument(def.rafsiDocuments[i]).appendTo(subDefs);
+        }
+        subDefs.appendTo(out);
+      }
+
 
       if (def.notes) {
         out.append($('<div>').addClass('notes').html(lojTemplate(def.notes)));
@@ -222,7 +233,7 @@
         handleUrl();
         return false;
       });
-      out.appendTo(output);
+      return out;
     }
 
     var searchIdCounter = 0;
@@ -282,7 +293,7 @@
     function displayResults() {
       var displayUpTo = Math.min(limit, results.length);
       for (; resultCount < displayUpTo; resultCount++) {
-        displayDocument(results[resultCount]);
+        displayDocument(results[resultCount]).appendTo(output);
       }
     }
 
