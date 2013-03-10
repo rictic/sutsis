@@ -58,6 +58,10 @@
             return $(r).text();
           })
         );
+        if (type === "gismu") {
+          rafsi.push(term);
+          rafsi.push(term.substring(0, term.length - 1));
+        }
 
         // todo: notes
         documentStore[term] = {
