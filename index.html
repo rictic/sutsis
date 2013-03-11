@@ -229,6 +229,9 @@
         rafsi.appendTo(out);
       }
       out.find('a').click(function(el) {
+        if (el.ctrlKey || el.metaKey) { // let the user open in new tabs
+          return;
+        }
         window.history.pushState({}, null, $(el.target).attr('href'));
         handleUrl();
         return false;
