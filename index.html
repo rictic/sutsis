@@ -227,7 +227,7 @@
           var rafElem = $("<span>").appendTo(rafsi);
           var raf = def.rafsi[i];
           if (def.type.match(/lujvo/)) {
-            rafElem.append($("<a>").attr('href', '/search/' + encodeURIComponent(raf)).text(raf));
+            rafElem.append($("<a>").attr('href', '/sutyvlaste/search/' + encodeURIComponent(raf)).text(raf));
           } else {
             rafElem.text(raf);
           }
@@ -266,9 +266,9 @@
     typehere.keyup(doSearch);
 
     function updateUrl(query) {
-      var url = '/';
+      var url = '/sutyvlaste/';
       if (query.length > 0) {
-        url = '/search/' + query
+        url = url + 'search/' + query
       }
       if (url == window.location.pathname) {
         return;
