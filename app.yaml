@@ -28,6 +28,10 @@ handlers:
   static_files: worker.js
   upload: worker.js
   secure: always
+- url: /lujvo.js
+  static_files: lujvo.js
+  upload: lujvo.js
+  secure: always
 - url: /parseXML.html
   static_files: parseXML.html
   upload: parseXML.html

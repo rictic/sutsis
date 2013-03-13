@@ -28,8 +28,8 @@ function search(query, callback) {
       results.push({
         type: 'unknown lujvo',
         word: query,
-        rafsi: [],
-        rafsiDocuments: decomposition.map(function(r){return rafsi[r]})
+        rafsi: decomposition,
+        rafsiDocuments: decomposition.map(function(r){return rafsi[r] || documentStore[r]})
       })
     }
   }
@@ -77,6 +77,9 @@ function initializer(injector, callback) {
 
   for (var key in documentStore) {
     var doc = documentStore[key];
+    if (doc.rafsi === undefined) {
+      debugger
+    }
     var text = [doc.word, doc.type, doc.definition, doc.notes, doc.rafsi.join(' ')].join(' ');
     injector.inject(text, key, synchro);
   }
@@ -86,69 +89,4 @@ function objectSize(obj) {
   var i = 0;
   for (var key in obj) i++;
   return i;
-}
-
-
-var rafsi = {};
-for (var key in documentStore) {
-  var def = documentStore[key];
-  for (var i = 0; i < def.rafsi.length; i++) {
-    rafsi[def.rafsi[i]] = def;
-  }
-}
-
-function parseLujvo(lujvo) {
-  var decompositions = decomposeIntoCandidateRafsi(lujvo);
-  var validDecompositions = [];
-  for (var i = 0; i < decompositions.length; i++) {
-    var decomposition = decompositions[i];
-    var valid = true;
-    for (var j = 0; j < decomposition.length; j++) {
-      if (!(decomposition[j] in rafsi)) {
-        valid = false;
-      }
-    }
-    if (valid) {
-      validDecompositions.push(decomposition);
-    }
-  }
-  return validDecompositions;
-}
-
-// non-validating
-function decomposeIntoCandidateRafsi(lujvo, someTaken) {
-  if (lujvo.length < 3) {
-    // invalid
-    return undefined;
-  }
-  if (someTaken && (lujvo.length === 3 || lujvo.length === 5)) {
-    return [lujvo];
-  }
-
-  var candidates = [splitAt(lujvo, 3), splitAt(lujvo, 4)];
-  var newCandidates = [];
-  for (var i = 0; i < candidates.length; i++) {
-    if (candidates[i][1].charAt(0) in {'y':true, 'n':true, 'r':true}) {
-      newCandidates.push([candidates[i][0], candidates[i][1].substring(1)])
-    }
-    newCandidates.push(candidates[i]);
-  }
-  candidates = newCandidates;
-
-  var results = [];
-  for (var i = 0; i < candidates.length; i++) {
-    var head = candidates[i][0], tail = candidates[i][1];
-    var decomposedTail = decomposeIntoCandidateRafsi(tail, true);
-    if (decomposedTail === undefined) {
-      continue;
-    }
-    for (var j = 0; j < decomposedTail.length; j++) {
-      results.push([head].concat(decomposedTail[j]));
-    }
-  }
-
-  return results;
-}
-function splitAt(s, i) {
-  return [s.substring(0, i), s.substring(i)];
 }

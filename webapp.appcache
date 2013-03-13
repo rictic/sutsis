@@ -1,12 +1,13 @@
 CACHE MANIFEST
 
-# Version 1.14
+# Version 1.27
 
 CACHE:
 /
 /search.js
 /worker.js
-/data/parsed4.js
+/lujvo.js
+/data/parsed.js?version=6
 /data/loading.gif
 /lib/jquery.js
 /lib/fullproof/unicode/categ_letters_numbers.js

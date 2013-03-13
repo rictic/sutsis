@@ -8,6 +8,9 @@
   <script>
     literals = {};
     documentStore = {};
+  </script>
+  <script src='lujvo.js'></script>
+  <script>
     function getDictionaryXML(callback) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', '/data/lojban-export.xml');
@@ -22,6 +25,15 @@
         literals[english] = [];
       }
       literals[english].push(lojban);
+    }
+
+    function checkDocumentStore() {
+      for (var key in documentStore) {
+        var doc = documentStore[key];
+        if (!doc.rafsi) {
+          throw new Error("no rafsi for " + key);
+        }
+      }
     }
 
     getDictionaryXML(function(doc) {
@@ -58,12 +70,11 @@
             return $(r).text();
           })
         );
-        if (type === "gismu") {
+        if (type === "gismu" || type === "experimental gismu") {
           rafsi.push(term);
           rafsi.push(term.substring(0, term.length - 1));
         }
 
-        // todo: notes
         documentStore[term] = {
             word: term,
             type: type,
@@ -72,6 +83,57 @@
             notes: notes
         };
       }
+      checkDocumentStore()
+      onUpdateDocumentStore();
+      checkDocumentStore();
+
+      var knownUnparsable = {
+        "boirlokra": true,  // no rafsi called lokra found
+        "zdima'aterte'e": true, // no rafsi te'e found, just a cmene
+        // Based on jax, a proposed rafsi of jai
+        "jaxnalvai": true,
+        "jaxpu'a": true,
+        "samjavyfonxypliduskemjuglerci'analka'ebi'ojaxyja'e": true,
+        "sudjaxri'a": true,
+        // Based on vob, a proposed rafsi for vo'a
+        "vobmipri": true,
+
+        // Based on rafsi of experimental gismu:
+        "ditka'e": true,
+        "duvma'i": true,
+        "felma'i": true,
+        "gamyma'i": true,
+
+        "kibdu'a": true,
+        "kibmalmri": true,
+        "kibyca'o": true,
+        "kibycpa": true,
+        "kibykarni": true,
+        "kibypapri": true,
+        "refkibycpa": true,
+
+        "sarvanxu'u": true,
+
+        // No clue, vlasisku is also confused:
+        "ku'urcedru": true,
+        "ku'urtaksu": true
+
+      };
+      for (var key in documentStore) {
+        var doc = documentStore[key];
+        if (doc.type === 'lujvo') {
+          var decompositions = parseLujvo(doc.word);
+          if (decompositions.length !== 1) {
+            if (!(doc.word in knownUnparsable)) {
+              console.error("parsed " + doc.word + " wrong: ", decompositions);
+            }
+          } else {
+            doc.rafsi = decompositions[0];
+          }
+        }
+      }
+      checkDocumentStore();
+
       document.write(('var documentStore = ' + JSON.stringify(documentStore)) + ';');
       document.write(('var literals = ' + JSON.stringify(literals)) + ';');
     });
