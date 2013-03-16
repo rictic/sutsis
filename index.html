@@ -308,7 +308,7 @@
     }
 
     function now() {
-      if (performance) {
+      if (window.performance) {
         if (performance.now) {
           return performance.now();
         }
