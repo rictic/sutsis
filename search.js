@@ -58,7 +58,7 @@ function search(query, callback) {
 
 var searchEngine;
 function setupSearchEngine(callback) {
-  var dbName = "sutyvlaste";
+  var dbName = "sutsis";
   searchEngine = new fullproof.BooleanEngine();
   var indexes = [{
       name: "normalindex",
