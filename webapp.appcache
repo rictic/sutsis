@@ -1,9 +1,6 @@
 CACHE MANIFEST
 
-# Version 1.44
-
-# NETWORK:
-# /*
+# Version 1.45
 
 CACHE:
 /
@@ -38,16 +35,17 @@ CACHE:
 /lib/Lato/Lato-Regular.ttf
 /lib/Lato.css
 /components/platform/platform.js
-/components/jquery/dist/jquery.min.js
-/components/core-header-panel/core-header-panel.html
-/components/core-header-panel/core-header-panel.css
 /components/polymer/polymer.html
 /components/polymer/layout.html
 /components/polymer/polymer.js
+/components/core-header-panel/core-header-panel.html
+/components/core-header-panel/core-header-panel.css
+/components/jquery/dist/jquery.min.js
+
 
 NETWORK:
 http://www.google-analytics.com/ga.js
-http://www.google-analytics.com/ga.js
+https://ssl.google-analytics.com/ga.js
 
 FALLBACK:
 /search/ /
