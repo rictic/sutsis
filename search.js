@@ -33,6 +33,7 @@ function search(query, callback) {
       })
     }
   }
+  var greatMatches = [];
   searchEngine.lookup(query, function(engineResults) {
     if (!engineResults) {
       callback(results);
@@ -50,8 +51,14 @@ function search(query, callback) {
       if (!doc) {
         continue;
       }
+      if (doc.word === query || (doc.type == 'gismu' && ((doc.rafsi || []).indexOf(query) != -1))) {
+        greatMatches.push(doc);
+      }
       results.push(doc);
     }
+
+    results = greatMatches.concat(results);
+
     callback(results);
   });
 }
