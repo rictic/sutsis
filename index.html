@@ -70,28 +70,59 @@
       padding-left: 5px;
       padding-right: 5px;
     }
+    #content-panel, #header-wrapper {
+      max-width: 700px;
+    }
     a {
       color: rgb(36, 137, 13);
       text-decoration: none;
     }
-    #output {
-      max-width: 700px;
+    #description {
+      margin-top: 50px;
+      text-align: center;
+      max-width: 473px;
+
+      text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+      color: #333;
     }
+    #loading {
+      text-align: center;
+    }
+    sup, sub {
+     vertical-align: baseline;
+     position: relative;
+     top: -0.4em;
+     font-size:70%;
+    }
+    sub { top: 0.4em; }
   </style>
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <script src='/bower_components/platform/platform.js'></script>
-  <link rel='import' href='/bower_components/core-header-panel/core-header-panel.html'>
+  <script src='/components/platform/platform.js'></script>
+  <link rel='import' href='/components/core-header-panel/core-header-panel.html'>
 </head>
 <body fullbleed layout vertical>
   <core-header-panel mode='seamed' flex>
-    <div class='core-header' layout horizontal center>
-      <span class='site-title'>sutsis</span>
-      <div flex></div>
-      <input id='typehere' type='text' autofocus></input>
+    <div class='core-header' layout horizontal center-justified>
+      <div id='header-wrapper' flex layout horizontal center>
+        <span class='site-title'>sutsis</span>
+        <div flex></div>
+        <input id='typehere' type='text' autofocus></input>
+      </div>
     </div>
 
-    <div class='content'>
-      <div id='output'></div>
+    <div class='content' layout horizontal center-justified>
+      <div id='content-panel'>
+        <div id='description'>
+          <p>
+            sutsis is a lightning-fast dictionary for the lojban language.
+          <p>
+            The entire dictionary is loaded into your browser, making it
+            fast, private, and as a bonus – it works offline.
+        </div>
+        <div id='output'></div>
+
+        <div id='loading'>Loading...</div>
+      </div>
     </div>
   </core-header-panel>
 
@@ -106,6 +137,7 @@
     var limit;
     var typehere = $("#typehere");
     var output = $("#output");
+    var description = $("#description");
     var worker = new Worker('/worker.js');
     var resultCount;
     var results = [];
@@ -219,6 +251,14 @@
 
       var searchId = ++searchIdCounter;
       output.empty();
+      if (query.trim() == '') {
+        output.hide();
+        description.show();
+        return;
+      } else {
+        description.hide();
+        output.show();
+      }
       limit = 50;
       resultCount = 0;
       worker.postMessage({kind: 'newSearch', 'query': query, 'searchId': searchId});

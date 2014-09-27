@@ -12,6 +12,9 @@ handlers:
   static_dir: data
   expiration: "90d"
   secure: always
+- url: /components
+  static_dir: bower_components
+  secure: always
 - url: /
   static_files: index.html
   upload: index.html
