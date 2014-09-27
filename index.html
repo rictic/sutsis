@@ -98,7 +98,8 @@
   </style>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <script src='/components/platform/platform.js'></script>
-  <link rel='import' href='/components/core-header-panel/core-header-panel.html'>
+  <link rel='import'
+        href='/components/core-header-panel/core-header-panel.html'>
 </head>
 <body fullbleed layout vertical unresolved>
   <core-header-panel mode='seamed' flex>
@@ -172,7 +173,8 @@
         displayResults();
       }
     }
-    document.querySelector('core-header-panel').addEventListener('scroll', checkScrolledNearBottom)
+    document.querySelector('core-header-panel')
+        .addEventListener('scroll', checkScrolledNearBottom);
     output.scroll();
 
     function lojTemplate(s) {
@@ -195,9 +197,11 @@
           .append($("<div>").addClass('type').text(def.type + ' '))
       );
       if (def.definition) {
-        $("<div>").addClass('definition').html(lojTemplate(def.definition) + ' ').appendTo(out);
+        $("<div>").addClass('definition').html(
+            lojTemplate(def.definition) + ' ').appendTo(out);
       } else {
-        var subDefs = $("<div>").addClass('definition').addClass('subdefinitions');
+        var subDefs = $("<div>")
+            .addClass('definition').addClass('subdefinitions');
         for (var i = 0; i < def.rafsiDocuments.length; i++) {
           displayDocument(def.rafsiDocuments[i]).appendTo(subDefs);
         }
@@ -206,7 +210,8 @@
 
 
       if (def.notes) {
-        out.append($('<div>').addClass('notes').html(lojTemplate(def.notes) + ' '));
+        out.append(
+            $('<div>').addClass('notes').html(lojTemplate(def.notes) + ' '));
       }
 
       if (def.rafsi && def.rafsi.length > 0) {
@@ -216,7 +221,11 @@
           var rafElem = $("<span>").appendTo(rafsi);
           var raf = def.rafsi[i];
           if (def.type.match(/lujvo/)) {
-            rafElem.append($("<a>").attr('href', '/search/' + encodeURIComponent(raf)).text(raf));
+            rafElem.append(
+                $("<a>").attr(
+                    'href', '/search/' + encodeURIComponent(raf))
+                .text(raf)
+            );
           } else {
             rafElem.text(raf);
           }
@@ -260,7 +269,8 @@
       output.empty();
       limit = 50;
       resultCount = 0;
-      worker.postMessage({kind: 'newSearch', 'query': query, 'searchId': searchId});
+      worker.postMessage(
+          {kind: 'newSearch', 'query': query, 'searchId': searchId});
     }
     typehere.keyup(doSearch);
     typehere.keydown(displayDescription);
@@ -322,9 +332,12 @@
     _gaq.push(['_trackPageview']);
 
     (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      var ga = document.createElement('script');
+      ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol
+                ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(ga, s);
     })();
   </script>
 </body>
