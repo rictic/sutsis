@@ -53,6 +53,7 @@ function search(query, callback) {
       }
       if (doc.word === query || (doc.type == 'gismu' && ((doc.rafsi || []).indexOf(query) != -1))) {
         greatMatches.push(doc);
+        continue;
       }
       results.push(doc);
     }
@@ -84,9 +85,6 @@ function initializer(injector, callback) {
 
   for (var key in documentStore) {
     var doc = documentStore[key];
-    if (doc.rafsi === undefined) {
-      debugger
-    }
     var text = [doc.word, doc.type, doc.definition, doc.notes, doc.rafsi.join(' ')].join(' ');
     injector.inject(text, key, synchro);
   }

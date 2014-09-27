@@ -1,6 +1,9 @@
 CACHE MANIFEST
 
-# Version 1.40
+# Version 1.44
+
+# NETWORK:
+# /*
 
 CACHE:
 /
@@ -23,9 +26,27 @@ CACHE:
 /lib/fullproof/resultsets.js
 /lib/fullproof/storemanager.js
 /lib/fullproof/stores/memory_store.js
-/lib/bootstrap/css/bootstrap.min.css
-/lib/bootstrap/img/glyphicons-halflings-white.png
-/lib/bootstrap/img/glyphicons-halflings.png
+/lib/Lato/Lato-Black.ttf
+/lib/Lato/Lato-BlackItalic.ttf
+/lib/Lato/Lato-Bold.ttf
+/lib/Lato/Lato-BoldItalic.ttf
+/lib/Lato/Lato-Hairline.ttf
+/lib/Lato/Lato-HairlineItalic.ttf
+/lib/Lato/Lato-Italic.ttf
+/lib/Lato/Lato-Light.ttf
+/lib/Lato/Lato-LightItalic.ttf
+/lib/Lato/Lato-Regular.ttf
+/lib/Lato.css
+/components/platform/platform.js
+/components/core-header-panel/core-header-panel.html
+/components/core-header-panel/core-header-panel.css
+/components/polymer/polymer.html
+/components/polymer/layout.html
+/components/polymer/polymer.js
+
+NETWORK:
+http://www.google-analytics.com/ga.js
+http://www.google-analytics.com/ga.js
 
 FALLBACK:
 /search/ /
