@@ -100,7 +100,7 @@
   <script src='/components/platform/platform.js'></script>
   <link rel='import' href='/components/core-header-panel/core-header-panel.html'>
 </head>
-<body fullbleed layout vertical>
+<body fullbleed layout vertical unresolved>
   <core-header-panel mode='seamed' flex>
     <div class='core-header' layout horizontal center-justified>
       <div id='header-wrapper' flex layout horizontal center>
@@ -116,8 +116,8 @@
           <p>
             sutsis is a lightning-fast dictionary for the lojban language.
           <p>
-            The entire dictionary is loaded into your browser, making it
-            fast, private, and as a bonus – it works offline.
+            The entire dictionary is loaded into your browser, making it <br>
+            fast, private, and reliable.
         </div>
         <div id='output'></div>
 
@@ -126,12 +126,6 @@
     </div>
   </core-header-panel>
 
-  <div id="footer" style='display: none;'>
-    <div class="container">
-      <p class="bug-tracker muted credit">Please file any issues <a href='https://github.com/rictic/sutsis/issues'>here</a></p>
-      <p class="muted credit">View source on github: <a href="http://github.com/rictic/sutsis">rictic/sutsis</a>.</p>
-    </div>
-  </div>
   <script src='/lib/jquery.js'></script>
   <script>
     var limit;
