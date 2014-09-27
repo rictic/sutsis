@@ -1,138 +1,104 @@
-<html manifest='/webapp.appcache'>
+<!DOCTYPE html>
+<!-- <html manifest='/webapp.appcache'> -->
+<html>
 <head>
   <title>sutsis: ze'i vlasisku</title>
-  <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.min.css">
+  <meta name="viewport" content="initial-scale=1.0,width=device-width,user-scalable=0" />
+  <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic'>
   <style type="text/css">
-    /* Sticky footer styles
-    -------------------------------------------------- */
-
-    html,
-    body {
-      height: 100%;
-      /* The html and body elements cannot have any padding or margin. */
-    }
-
-    /* Wrapper for page content to push down footer */
-    #wrap {
-      min-height: 100%;
-      height: auto !important;
-      height: 100%;
-      /* Negative indent footer by it's height */
-      margin: 0 auto -60px;
-    }
-
-    /* Set the fixed height of the footer here */
-    #push,
-    #footer {
-      height: 60px;
-    }
-    #footer {
-      background-color: #f5f5f5;
-    }
-
-    /* Lastly, apply responsive CSS fixes as necessary */
-    @media (max-width: 767px) {
-      #footer {
-        margin-left: -20px;
-        margin-right: -20px;
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-    }
-
-
-
-    /* Custom page CSS
-    -------------------------------------------------- */
-    /* Not required for template or sticky footer method. */
-
-    .container {
-      width: auto;
-      max-width: 680px;
-    }
     .container .credit {
       margin: 20px 0;
     }
 
-
-
+    body {
+      font-family: Lato, sans-serif;
+    }
 
     h4 {
       display: inline;
+      margin: 0;
     }
     .type {
       display: inline;
       font-style: italic;
       margin-left: 25px;
+      color: rgb(118, 118, 118);
+      font-size: 12px;
     }
     .definition {
       margin-top: 10px;
       margin-bottom: 10px;
     }
     .term {
-      margin: 30px;
-    }
-    #search {
-      display: none;
+      padding-top: 12px;
+      padding-bottom: 9px;
+      border-bottom-color: rgba(0, 0, 0, 0.0980392);
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
     }
     .rafsi {
+      margin-top: 8px;
       font-size: 90%;
     }
     .rafsi span {
       font-style: italic;
       margin-left: 15px;
     }
-    .right-header {
-      float: right;
-      margin-top: 14px;
-    }
-    #typehere {
-      height: 30px;
-      width: 206px;
-    }
+
     .bug-tracker {
       float:right;
     }
+
+    .core-header {
+      height: 48px;
+      font-size: 18px;
+      padding: 0 10px;
+      background-color: #000;
+      color: #FFF;
+    }
+
+    ::selection {
+      background: #24890d;
+      color: #fff;
+      text-shadow: none;
+    }
+    .site-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .content {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    a {
+      color: rgb(36, 137, 13);
+      text-decoration: none;
+    }
+    #output {
+      max-width: 700px;
+    }
   </style>
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src='/bower_components/platform/platform.js'></script>
+  <link rel='import' href='/bower_components/core-header-panel/core-header-panel.html'>
 </head>
-<body>
-  <div id="wrap">
-    <div class="container">
-      <div class="page-header">
-        <div class='right-header'>
-          <div id='loading'>
-            <img src="/data/loading.gif">
-          </div>
-          <div id='search'>
-
-            <div class="control-group">
-              <div class="controls">
-                <div class="input-prepend">
-                  <span class="add-on"><i class="icon-search"></i></span>
-                  <input class="span2" id="typehere" type="text" autofocus>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h1>sutsis</h1>
-
-      </div>
-
-      <div id='output'></div>
-
+<body fullbleed layout vertical>
+  <core-header-panel mode='seamed' flex>
+    <div class='core-header' layout horizontal center>
+      <span class='site-title'>sutsis</span>
+      <div flex></div>
+      <input id='typehere' type='text' autofocus></input>
     </div>
 
-    <div id="push"></div>
-  </div>
+    <div class='content'>
+      <div id='output'></div>
+    </div>
+  </core-header-panel>
 
-  <div id="footer">
+  <div id="footer" style='display: none;'>
     <div class="container">
       <p class="bug-tracker muted credit">Please file any issues <a href='https://github.com/rictic/sutsis/issues'>here</a></p>
       <p class="muted credit">View source on github: <a href="http://github.com/rictic/sutsis">rictic/sutsis</a>.</p>
-
     </div>
   </div>
   <script src='/lib/jquery.js'></script>
@@ -167,16 +133,18 @@
       doSearch();
     }
 
-    function checkScrolledNearBottom() {
-      var windowBottom = ($(window).scrollTop() + window.innerHeight);
-      var bottom = $(document).height() - 700;
-      var isClose = windowBottom >= bottom;
+    function checkScrolledNearBottom(ev) {
+      var target = ev.detail.target;
+      var windowBottom = target.scrollTop + window.innerHeight;
+      var outputBottom = output.height() - 700;
+      var isClose = windowBottom >= outputBottom;
       if(isClose) {
         limit += 10;
         displayResults();
       }
     }
-    $(window).scroll(checkScrolledNearBottom);
+    document.querySelector('core-header-panel').addEventListener('scroll', checkScrolledNearBottom)
+    output.scroll();
 
     function lojTemplate(s) {
       s = s.replace(/\$.*?\$/g, function(c) {
@@ -192,8 +160,9 @@
 
     function displayDocument(def) {
       var out = $("<div>").addClass('term');
-      out.append($("<heading>")
+      out.append($("<heading layout flex horizontal end>")
           .append($("<h4>").text(def.word + ' '))
+          .append($("<div flex>"))
           .append($("<div>").addClass('type').text(def.type + ' '))
       );
       if (def.definition) {
@@ -250,7 +219,7 @@
 
       var searchId = ++searchIdCounter;
       output.empty();
-      limit = 10;
+      limit = 50;
       resultCount = 0;
       worker.postMessage({kind: 'newSearch', 'query': query, 'searchId': searchId});
     }
