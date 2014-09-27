@@ -127,7 +127,7 @@
     </div>
   </core-header-panel>
 
-  <script src='/lib/jquery.js'></script>
+  <script src='/components/jquery/dist/jquery.min.js'></script>
   <script>
     var limit;
     var typehere = $("#typehere");
@@ -238,7 +238,17 @@
     var searchIdCounter = 0;
     var prevQuery;
     var lastQueried = now();
+    function displayDescription() {
+      if (typehere.val().trim() == '') {
+        output.hide();
+        description.show();
+      } else {
+        description.hide();
+        output.show();
+      }
+    }
     function doSearch() {
+      displayDescription();
       var query = typehere.val();
       if (query === prevQuery) {
         return;
@@ -248,19 +258,12 @@
 
       var searchId = ++searchIdCounter;
       output.empty();
-      if (query.trim() == '') {
-        output.hide();
-        description.show();
-        return;
-      } else {
-        description.hide();
-        output.show();
-      }
       limit = 50;
       resultCount = 0;
       worker.postMessage({kind: 'newSearch', 'query': query, 'searchId': searchId});
     }
     typehere.keyup(doSearch);
+    typehere.keydown(displayDescription);
 
     function updateUrl(query) {
       var url = '/';
