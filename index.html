@@ -97,8 +97,11 @@
   </style>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <script src='/components/platform/platform.js'></script>
+  <link rel='import' href='/components/polymer/polymer.html'>
   <link rel='import'
         href='/components/core-header-panel/core-header-panel.html'>
+  <link rel='import'
+        href='/components/paper-progress/paper-progress.html'>
 </head>
 <body fullbleed layout vertical unresolved>
   <core-header-panel mode='seamed' flex>
@@ -106,7 +109,7 @@
       <div id='header-wrapper' flex layout horizontal center>
         <span class='site-title'>sutsis</span>
         <div flex></div>
-        <input id='typehere' type='text' autofocus></input>
+        <input id='typehere' type='text' autofocus>
       </div>
     </div>
 
@@ -122,7 +125,9 @@
         <div id='output'></div>
 
         <div id='loading'>
-          <span class='message'>Loading dictionary</span>...</div>
+          <span class='message'>Loading dictionary</span>...<br>
+          <paper-progress id='progress' value='0'></paper-progress>
+        </div>
       </div>
     </div>
   </core-header-panel>
@@ -133,6 +138,7 @@
     var typehere = $("#typehere");
     var output = $("#output");
     var description = $("#description");
+    var progress = $('#progress');
     var worker = new Worker('/worker.js');
     var resultCount;
     var results = [];
@@ -152,6 +158,8 @@
         displayResults();
       } else if (ev.data.kind == 'loading') {
         $("#loading .message").text(ev.data.message);
+      } else if (ev.data.kind == 'progress') {
+        progress.attr('value', ev.data.percent * 100);
       }
     };
 

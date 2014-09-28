@@ -15,4 +15,6 @@ this.onmessage = function(ev) {
 postMessage({kind: 'loading', message: 'Building index'});
 setupSearchEngine(function() {
   postMessage({kind: 'ready'});
+}, function(percent) {
+  postMessage({kind: 'progress', percent: percent})
 });

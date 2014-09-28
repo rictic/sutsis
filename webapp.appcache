@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# Version 1.45
+# Version 1.48
 
 CACHE:
 /
@@ -40,12 +40,14 @@ CACHE:
 /components/polymer/polymer.js
 /components/core-header-panel/core-header-panel.html
 /components/core-header-panel/core-header-panel.css
+/components/paper-progress/paper-progress.html
+/components/paper-progress/paper-progress.css
 /components/jquery/dist/jquery.min.js
 
 
 NETWORK:
-http://www.google-analytics.com/ga.js
-https://ssl.google-analytics.com/ga.js
+https://ssl.google-analytics.com/
+http://www.google-analytics.com/
 
 FALLBACK:
 /search/ /
