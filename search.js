@@ -65,7 +65,9 @@ function search(query, callback) {
 }
 
 var searchEngine;
-function setupSearchEngine(callback) {
+var progress;
+function setupSearchEngine(callback, prgrss) {
+  progress = prgrss;
   var dbName = "sutsis";
   searchEngine = new fullproof.BooleanEngine();
   var indexes = [{
@@ -83,11 +85,15 @@ function initializer(injector, callback) {
   var numTerms = objectSize(documentStore);
   var synchro = fullproof.make_synchro_point(callback, numTerms);
 
+  var wordsArray = [];
+  var valuesArray = [];
   for (var key in documentStore) {
     var doc = documentStore[key];
     var text = [doc.word, doc.type, doc.definition, doc.notes, doc.rafsi.join(' ')].join(' ');
-    injector.inject(text, key, synchro);
+    wordsArray.push(text);
+    valuesArray.push(key);
   }
+  injector.injectBulk(wordsArray, valuesArray, callback, progress);
 }
 
 function objectSize(obj) {
