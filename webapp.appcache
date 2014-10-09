@@ -42,6 +42,7 @@ CACHE:
 /components/polymer/polymer.js
 /components/core-header-panel/core-header-panel.html
 /components/core-header-panel/core-header-panel.css
+/components/core-range/core-range.html
 /components/paper-progress/paper-progress.html
 /components/paper-progress/paper-progress.css
 /components/jquery/dist/jquery.min.js
