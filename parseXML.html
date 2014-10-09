@@ -4,7 +4,15 @@
 </head>
 <body>
 
-  <script src='/lib/jquery.js'></script>
+  <!-- How to use:
+
+       1. Download the updated XML database dump to data/lojban-export.xml
+       2. Run `bower install ./`
+       3. Start the app engine development server: dev_appserver.py ./
+       4. Open http://localhost:8080/parseXML.html in your browser
+       5. Copy the output to data/parsed.js
+   -->
+  <script src='/components/jquery/dist/jquery.js'></script>
   <script>
     literals = {};
     documentStore = {};
